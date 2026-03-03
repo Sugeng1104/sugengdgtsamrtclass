@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Tebak Suara Hewan - PAUD 2.0</title>
+<title>Tebak Suara Hewan - PAUD 2.1</title>
 
 <style>
 body{
@@ -19,9 +19,7 @@ h1{
   animation:bounce 2s infinite;
 }
 
-#score{
-  font-size:22px;
-}
+#score{ font-size:22px; }
 
 .grid{
   display:flex;
@@ -40,13 +38,9 @@ h1{
   box-shadow:0 10px 20px rgba(0,0,0,0.2);
 }
 
-.card:hover{
-  transform:scale(1.15);
-}
+.card:hover{ transform:scale(1.15); }
 
-.emoji{
-  font-size:90px;
-}
+.emoji{ font-size:90px; }
 
 #result{
   font-size:32px;
@@ -73,7 +67,6 @@ button{
   position:absolute;
   width:10px;
   height:10px;
-  background:red;
   top:-10px;
   animation:fall 3s linear forwards;
 }
@@ -91,24 +84,40 @@ button{
 <button onclick="playSound()">▶ Dengarkan Suara</button>
 
 <div class="grid" id="choices"></div>
-
 <div id="result"></div>
 
 <script>
 
+// 🔓 AUDIO UNLOCK (WAJIB UNTUK CHROME)
+let audioUnlocked = false;
+document.body.addEventListener("click", function(){
+  if(!audioUnlocked){
+    const context = new (window.AudioContext || window.webkitAudioContext)();
+    context.resume();
+    audioUnlocked = true;
+  }
+});
+
+// 🎵 PASTIKAN NAMA FILE SAMA PERSIS DI GITHUB (huruf besar kecil sama)
 const animals=[
-  {name:"Kucing",emoji:"🐱",sound:"https://actions.google.com/sounds/v1/animals/cat_meow.ogg"},
-  {name:"Sapi",emoji:"🐮",sound:"https://actions.google.com/sounds/v1/animals/cow.ogg"},
-  {name:"Ayam",emoji:"🐔",sound:"https://actions.google.com/sounds/v1/animals/chicken_cluck.ogg"},
-  {name:"Gajah",emoji:"🐘",sound:"https://actions.google.com/sounds/v1/animals/elephant.ogg"},
-  {name:"Singa",emoji:"🦁",sound:"https://actions.google.com/sounds/v1/animals/lion_roar.ogg"}
+  {name:"Kucing",emoji:"🐱",sound:"assets/sound/kucing.mp3"},
+  {name:"Sapi",emoji:"🐮",sound:"assets/sound/sapi.mp3"},
+  {name:"Ayam",emoji:"🐔",sound:"assets/sound/ayam.mp3"},
+  {name:"Gajah",emoji:"🐘",sound:"assets/sound/gajah.mp3"},
+  {name:"Singa",emoji:"🦁",sound:"assets/sound/singa.mp3"}
 ];
 
 let correct;
 let score=0;
 
-const clap=new Audio("https://actions.google.com/sounds/v1/crowds/applause.ogg");
-const wrong=new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+// preload audio supaya tidak delay
+animals.forEach(a=>{
+  a.audio = new Audio(a.sound);
+  a.audio.preload="auto";
+});
+
+const clap = new Audio("assets/sound/clap.mp3");
+const wrong = new Audio("assets/sound/wrong.mp3");
 
 function shuffle(array){
   return array.sort(()=>0.5-Math.random());
@@ -132,17 +141,16 @@ function loadGame(){
 }
 
 function playSound(){
-  let audio=new Audio(correct.sound);
-  audio.play();
+  correct.audio.currentTime = 0;
+  correct.audio.play().catch(e=>console.log(e));
 }
 
 function checkAnswer(answer){
 
   let selected=animals.find(a=>a.name===answer);
 
-  // suara hewan saat diklik
-  let sound=new Audio(selected.sound);
-  sound.play();
+  selected.audio.currentTime=0;
+  selected.audio.play().catch(e=>console.log(e));
 
   if(answer===correct.name){
     score++;
