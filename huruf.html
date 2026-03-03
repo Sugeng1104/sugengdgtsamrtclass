@@ -92,6 +92,23 @@ button{
   color:#ff0066;
   text-decoration:none;
 }
+
+  .celebration{
+  position:fixed;
+  bottom:120px;
+  width:100%;
+  display:none;
+}
+
+.girl{
+  font-size:100px;
+  animation:jumpClap 0.8s ease infinite alternate;
+}
+
+@keyframes jumpClap{
+  0%{ transform:translateY(0); }
+  100%{ transform:translateY(-40px); }
+}
 </style>
 </head>
 <body>
@@ -104,6 +121,10 @@ button{
 <div class="grid" id="choices"></div>
 
 <div id="result"></div>
+
+<div id="celebration" class="celebration">
+  <div class="girl">👧</div>
+</div>
 
 <div class="creator">
   Dibuat oleh 
@@ -151,10 +172,13 @@ function playSound(){
 function checkAnswer(answer){
 
   if(answer===correct){
-    score++;
-    clap.play();
-    document.getElementById("result").innerHTML="🎉 Hebat!";
-    createConfetti();
+  score++;
+  clap.play();
+  document.getElementById("result").innerHTML="🎉 Hebat!";
+
+  showCelebration();
+  createConfetti();
+}
   }else{
     wrong.play();
     document.getElementById("result").innerHTML="❌ Coba Lagi";
@@ -177,7 +201,14 @@ function createConfetti(){
 }
 
 loadGame();
+function showCelebration(){
+  const celeb = document.getElementById("celebration");
+  celeb.style.display="block";
 
+  setTimeout(()=>{
+    celeb.style.display="none";
+  },1500);
+}
 </script>
 
 </body>
