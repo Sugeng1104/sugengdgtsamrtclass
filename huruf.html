@@ -139,8 +139,9 @@ const letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 let correct;
 let score=0;
 
-const clap=new Audio("https://actions.google.com/sounds/v1/crowds/applause.ogg");
-const wrong=new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg");
+const clap = new Audio("assets/sound/clap.mp3");
+const wrong = new Audio("assets/sound/wrong.mp3");
+
 
 function shuffle(array){
   return array.sort(()=>0.5-Math.random());
@@ -213,3 +214,4 @@ loadGame();
 
 </body>
 </html>
+
