@@ -121,25 +121,37 @@ h1{
   </div>
 </div>
 
-<audio id="bgMusic" loop autoplay>
+<!-- Musik latar -->
+<audio id="bgMusic" loop>
   <source src="assets/sound/background.mp3" type="audio/mp3">
 </audio>
 
+<!-- Efek klik tombol -->
 <audio id="clickSound" preload="auto">
   <source src="assets/sound/ring.mp3" type="audio/mp3">
 </audio>
 
 <script>
+const bgMusic = document.getElementById("bgMusic");
+const click = document.getElementById("clickSound");
+
 function openGame(url){
-  // mainkan efek suara ring
-  const click = document.getElementById("clickSound");
+  // mainkan efek klik
   click.currentTime = 0;
   click.play();
 
-  // buka halaman permainan
+  // mulai musik latar jika belum berjalan
+  if(bgMusic.paused){
+    bgMusic.volume = 0.3; // volume nyaman untuk anak-anak
+    bgMusic.play().catch(err=>{
+      console.log("Autoplay gagal:", err);
+    });
+  }
+
+  // buka halaman permainan setelah delay supaya suara terdengar
   setTimeout(()=>{
     window.location.href = url;
-  }, 200); // delay supaya suara terdengar
+  }, 200);
 }
 </script>
 
