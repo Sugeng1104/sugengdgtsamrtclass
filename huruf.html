@@ -93,7 +93,7 @@ button{
   text-decoration:none;
 }
 
-  .celebration{
+.celebration{
   position:fixed;
   bottom:120px;
   width:100%;
@@ -172,14 +172,12 @@ function playSound(){
 function checkAnswer(answer){
 
   if(answer===correct){
-  score++;
-  clap.play();
-  document.getElementById("result").innerHTML="🎉 Hebat!";
-
-  showCelebration();
-  createConfetti();
-}
-  }else{
+    score++;
+    clap.play();
+    document.getElementById("result").innerHTML="🎉 Hebat!";
+    showCelebration();
+    createConfetti();
+  } else {
     wrong.play();
     document.getElementById("result").innerHTML="❌ Coba Lagi";
   }
@@ -200,7 +198,6 @@ function createConfetti(){
   }
 }
 
-loadGame();
 function showCelebration(){
   const celeb = document.getElementById("celebration");
   celeb.style.display="block";
@@ -209,6 +206,9 @@ function showCelebration(){
     celeb.style.display="none";
   },1500);
 }
+
+loadGame();
+
 </script>
 
 </body>
