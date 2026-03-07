@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Game Tebak Bentuk</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+background:linear-gradient(#d4f1ff,#ffffff);
+}
+
+h1{
+color:#333;
+}
+
+#instruksi{
+font-size:28px;
+margin:20px;
+}
+
+.container{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+margin-top:30px;
+}
+
+.bentuk{
+width:120px;
+height:120px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.bentuk:hover{
+transform:scale(1.15);
+}
+
+#score{
+font-size:24px;
+margin-top:20px;
+}
+
+#animasi{
+font-size:80px;
+display:none;
+margin-top:20px;
+}
+
+button{
+padding:12px 20px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#4CAF50;
+color:white;
+cursor:pointer;
+margin-top:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🔷 Game Tebak Bentuk</h1>
+
+<div id="instruksi">Pilih bentuk yang benar!</div>
+
+<div class="container">
+
+<img src="assets/img/lingkaran.png" class="bentuk" onclick="cekJawaban('lingkaran')">
+<img src="assets/img/persegi.png" class="bentuk" onclick="cekJawaban('persegi')">
+<img src="assets/img/segitiga.png" class="bentuk" onclick="cekJawaban('segitiga')">
+<img src="assets/img/bintang.png" class="bentuk" onclick="cekJawaban('bintang')">
+
+</div>
+
+<div id="animasi">👏😊👏</div>
+
+<div id="score">Skor: 0</div>
+
+<button onclick="loadGame()">Soal Baru</button>
+
+<br><br>
+
+<button onclick="window.location.href='index.html'">⬅ Kembali ke Menu</button>
+
+<audio id="benar" src="assets/sound/clap.mp3"></audio>
+<audio id="salah" src="assets/sound/wrong.mp3"></audio>
+<audio id="guru" src="assets/sound/guru.mp3"></audio>
+<audio id="musik" src="assets/sound/latar musik.mp3" loop></audio>
+
+<script>
+
+const bentukList = [
+"lingkaran",
+"persegi",
+"segitiga",
+"bintang"
+]
+
+let jawaban = ""
+let score = 0
+
+function loadGame(){
+
+document.getElementById("animasi").style.display="none"
+
+jawaban = bentukList[Math.floor(Math.random()*bentukList.length)]
+
+document.getElementById("instruksi").innerHTML =
+"🎧 Pilih bentuk <b>"+jawaban.toUpperCase()+"</b>"
+
+suaraGuru()
+
+}
+
+function cekJawaban(pilih){
+
+if(pilih == jawaban){
+
+score++
+
+document.getElementById("score").innerHTML="Skor: "+score
+
+document.getElementById("benar").play()
+
+document.getElementById("animasi").style.display="block"
+
+setTimeout(loadGame,1500)
+
+}
+
+else{
+
+document.getElementById("salah").play()
+
+}
+
+}
+
+function suaraGuru(){
+
+let guru = document.getElementById("guru")
+guru.currentTime = 0
+guru.play()
+
+}
+
+window.onload=function(){
+
+let musik=document.getElementById("musik")
+musik.volume=0.2
+musik.play()
+
+loadGame()
+
+}
+
+</script>
+
+<br><br>
+
+<div style="margin-top:30px;font-size:14px">
+Dibuat oleh  
+<a href="https://wa.me/6283862505875">@SugengHidayat</a>
+</div>
+
+</body>
+</html>
