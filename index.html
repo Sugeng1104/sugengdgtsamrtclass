@@ -88,11 +88,11 @@ h1{
 
 <!-- AUDIO -->
 <audio id="bgMusic" loop>
-<source src="assets/sound/latar musik.mp3" type="audio/mpeg">
+  <source src="assets/sound/latarmusik.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="ringSound">
-<source src="assets/sound/ring.mp3" type="audio/mpeg">
+  <source src="assets/sound/ring.mp3" type="audio/mpeg">
 </audio>
 
 
@@ -141,10 +141,22 @@ h1{
 const bgMusic = document.getElementById("bgMusic");
 const ringSound = document.getElementById("ringSound");
 
-/* AUTOPLAY setelah klik pertama */
-document.body.addEventListener("click", function(){
-    bgMusic.play();
-},{once:true});
+/* mencoba autoplay saat halaman load */
+window.addEventListener("load", function(){
+    bgMusic.volume = 0.5;
+
+    let playPromise = bgMusic.play();
+
+    if(playPromise !== undefined){
+        playPromise.catch(function(){
+            /* jika autoplay diblok browser,
+               musik akan aktif saat klik pertama */
+            document.body.addEventListener("click", function(){
+                bgMusic.play();
+            }, {once:true});
+        });
+    }
+});
 
 
 function openGame(url){
