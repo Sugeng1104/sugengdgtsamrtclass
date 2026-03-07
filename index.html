@@ -189,50 +189,60 @@ Dibuat oleh
 </div>
 
 <!-- AUDIO -->
+
 <audio id="bgMusic" loop>
-<source src="assets/sound/latarmusik.mp3" type="audio/mpeg">
+<source src="assets/sound/latar musik.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="ringSound">
 <source src="assets/sound/ring.mp3" type="audio/mpeg">
 </audio>
 
+<audio id="guruVoice">
+<source src="assets/sound/guru.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 
 const bgMusic=document.getElementById("bgMusic")
 const ringSound=document.getElementById("ringSound")
+const guruVoice=document.getElementById("guruVoice")
 
-function teacherGreeting(){
-
-let text="Halo anak anak. Ayo kita belajar sambil bermain."
-
-let speech=new SpeechSynthesisUtterance(text)
-
-speech.lang="id-ID"
-speech.pitch=1.2
-speech.rate=0.9
-
-speechSynthesis.speak(speech)
-
-}
+let greeted=false
 
 window.addEventListener("load",()=>{
 
 showTotalScore()
 
-setTimeout(teacherGreeting,1000)
-
 let playPromise=bgMusic.play()
 
 if(playPromise!==undefined){
+
 playPromise.catch(()=>{
-document.body.addEventListener("click",()=>{
-bgMusic.play()
-},{once:true})
+
+document.body.addEventListener("click",startExperience,{once:true})
+
 })
+
+}else{
+
+startExperience()
+
 }
 
 })
+
+function startExperience(){
+
+bgMusic.volume=0.25
+bgMusic.play()
+
+if(!greeted){
+guruVoice.play()
+greeted=true
+}
+
+}
 
 function toggleMusic(){
 
