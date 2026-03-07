@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Puzzle Mini</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+background:linear-gradient(#fff3cd,#ffffff);
+}
+
+h1{
+margin-top:20px;
+}
+
+#board{
+width:300px;
+height:300px;
+margin:20px auto;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+grid-template-rows:repeat(3,1fr);
+gap:3px;
+border:4px solid #333;
+}
+
+.tile{
+background-size:300px 300px;
+cursor:pointer;
+}
+
+#animasi{
+font-size:80px;
+display:none;
+}
+
+button{
+padding:12px 20px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#4CAF50;
+color:white;
+cursor:pointer;
+margin-top:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>🧩 Puzzle Mini</h1>
+
+<div id="board"></div>
+
+<div id="animasi">👏😊👏</div>
+
+<button onclick="startGame()">Puzzle Baru</button>
+
+<br><br>
+
+<button onclick="window.location.href='index.html'">
+⬅ Kembali ke Menu
+</button>
+
+<audio id="clap" src="assets/sound/clap.mp3"></audio>
+<audio id="musik" src="assets/sound/latar musik.mp3" loop></audio>
+
+<script>
+
+const board=document.getElementById("board")
+
+let tiles=[]
+
+function startGame(){
+
+document.getElementById("animasi").style.display="none"
+
+tiles=[0,1,2,3,4,5,6,7,8]
+
+shuffle(tiles)
+
+render()
+
+}
+
+function shuffle(array){
+
+for(let i=array.length-1;i>0;i--){
+
+let j=Math.floor(Math.random()*(i+1))
+
+[array[i],array[j]]=[array[j],array[i]]
+
+}
+
+}
+
+function render(){
+
+board.innerHTML=""
+
+tiles.forEach((num,index)=>{
+
+let div=document.createElement("div")
+
+div.className="tile"
+
+let x=num%3
+let y=Math.floor(num/3)
+
+div.style.backgroundImage="url('assets/img/puzzle-hewan.jpg')"
+div.style.backgroundPosition=`-${x*100}px -${y*100}px`
+
+div.onclick=()=>move(index)
+
+board.appendChild(div)
+
+})
+
+}
+
+function move(index){
+
+if(index<tiles.length-1){
+
+[tiles[index],tiles[index+1]]=[tiles[index+1],tiles[index]]
+
+render()
+
+checkWin()
+
+}
+
+}
+
+function checkWin(){
+
+let win=true
+
+for(let i=0;i<tiles.length;i++){
+
+if(tiles[i]!=i){
+
+win=false
+break
+
+}
+
+}
+
+if(win){
+
+document.getElementById("animasi").style.display="block"
+
+document.getElementById("clap").play()
+
+}
+
+}
+
+window.onload=function(){
+
+let musik=document.getElementById("musik")
+
+musik.volume=0.2
+
+musik.play()
+
+startGame()
+
+}
+
+</script>
+
+<br><br>
+
+<div style="font-size:14px">
+Dibuat oleh 
+<a href="https://wa.me/6283862505875">@SugengHidayat</a>
+</div>
+
+</body>
+</html>
