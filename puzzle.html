@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Puzzle Hewan PRO</title>
+<title>Puzzle Hewan ULTRA</title>
 
 <style>
 
@@ -14,34 +14,49 @@ background:linear-gradient(#ffeaa7,#ffffff);
 }
 
 h1{
-margin-top:20px;
 font-size:40px;
+margin-top:20px;
+}
+
+#gameArea{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:30px;
+margin-top:20px;
+flex-wrap:wrap;
+}
+
+#preview{
+width:180px;
+border:4px solid #333;
+border-radius:10px;
 }
 
 #board{
-margin:20px auto;
 width:360px;
 height:360px;
 display:grid;
 gap:2px;
 border:4px solid #333;
+background:#ddd;
 }
 
 .tile{
 border-radius:6px;
-cursor:pointer;
 background-repeat:no-repeat;
+cursor:grab;
 }
 
-.tile:hover{
-opacity:0.9;
+.tile.correct{
+box-shadow:0 0 10px #00ff00;
 }
 
 .controls{
 margin-top:10px;
 }
 
-button{
+button,select{
 padding:10px 20px;
 font-size:16px;
 border:none;
@@ -58,7 +73,6 @@ color:white;
 
 #star{
 font-size:25px;
-margin-top:10px;
 }
 
 #win{
@@ -104,36 +118,36 @@ to{transform:translateY(100vh) rotate(720deg)}
 
 <button onclick="startGame()">Puzzle Baru</button>
 
-<button onclick="window.location.href='index.html'">
-⬅ Menu
-</button>
+<button onclick="location.href='index.html'">⬅ Menu</button>
 
 </div>
 
+<div id="gameArea">
+
+<img id="preview">
+
 <div id="board"></div>
+
+</div>
 
 <div id="win">🎉</div>
 
-<!-- AUDIO -->
 <audio id="clap" src="assets/sound/clap.mp3"></audio>
 <audio id="guru" src="assets/sound/guru.mp3"></audio>
-
-<!-- MUSIK LATAR -->
-<audio id="bgMusic" loop>
-<source src="assets/sound/misteri.mp3" type="audio/mpeg">
-</audio>
+<audio id="bg" src="assets/sound/misteri.mp3" loop></audio>
 
 <script>
 
 const board=document.getElementById("board")
-const bgMusic=document.getElementById("bgMusic")
+const preview=document.getElementById("preview")
+const bg=document.getElementById("bg")
 
-bgMusic.volume=0.25
+bg.volume=0.25
 
 let size=3
 let tiles=[]
-let empty
 let star=0
+let currentImage=""
 
 const images=[
 "assets/images/puzzle/puzzle1.png",
@@ -143,14 +157,11 @@ const images=[
 "assets/images/puzzle/puzzle5.png"
 ]
 
-let currentImage=""
-
 function startGame(){
 
-size=parseInt(document.getElementById("level").value)
+size=parseInt(level.value)
 
 board.style.gridTemplateColumns=`repeat(${size},1fr)`
-board.style.gridTemplateRows=`repeat(${size},1fr)`
 
 tiles=[]
 
@@ -158,15 +169,15 @@ for(let i=0;i<size*size;i++){
 tiles.push(i)
 }
 
-empty=tiles.length-1
+shuffle()
 
 currentImage=images[Math.floor(Math.random()*images.length)]
 
-shuffle()
+preview.src=currentImage
 
 render()
 
-document.getElementById("win").style.display="none"
+win.style.display="none"
 
 }
 
@@ -182,9 +193,9 @@ tiles[j]=temp
 
 }
 
-empty=tiles.indexOf(tiles.length-1)
-
 }
+
+let dragIndex=null
 
 function render(){
 
@@ -210,13 +221,15 @@ div.style.backgroundImage=`url(${currentImage})`
 div.style.backgroundSize="360px 360px"
 div.style.backgroundPosition=`-${x}px -${y}px`
 
-}else{
-
-div.style.background="white"
-
 }
 
-div.onclick=()=>move(index)
+div.draggable=true
+
+div.ondragstart=()=>dragIndex=index
+
+div.ondragover=e=>e.preventDefault()
+
+div.ondrop=()=>swap(index)
 
 board.appendChild(div)
 
@@ -224,30 +237,13 @@ board.appendChild(div)
 
 }
 
-function move(index){
+function swap(index){
 
-let row=Math.floor(index/size)
-let col=index%size
-
-let emptyRow=Math.floor(empty/size)
-let emptyCol=empty%size
-
-let valid=false
-
-if(row==emptyRow && Math.abs(col-emptyCol)==1) valid=true
-if(col==emptyCol && Math.abs(row-emptyRow)==1) valid=true
-
-if(valid){
-
-[tiles[index],tiles[empty]]=[tiles[empty],tiles[index]]
-
-empty=index
+[tiles[index],tiles[dragIndex]]=[tiles[dragIndex],tiles[index]]
 
 render()
 
 checkWin()
-
-}
 
 }
 
@@ -257,12 +253,12 @@ for(let i=0;i<tiles.length;i++){
 if(tiles[i]!=i)return
 }
 
-document.getElementById("win").style.display="block"
+win.style.display="block"
 
-document.getElementById("clap").play()
+clap.play()
 
 setTimeout(()=>{
-document.getElementById("guru").play()
+guru.play()
 },800)
 
 confetti()
@@ -275,9 +271,9 @@ function addStar(){
 
 star++
 
-document.getElementById("star").innerHTML="⭐ "+star
+starDiv.innerHTML="⭐ "+star
 
-let data=JSON.parse(localStorage.getItem("paud_score")) || {}
+let data=JSON.parse(localStorage.getItem("paud_score"))||{}
 
 data["puzzle"]=(data["puzzle"]||0)+1
 
@@ -305,26 +301,13 @@ setTimeout(()=>c.remove(),3000)
 
 }
 
-startGame()
+window.addEventListener("click",()=>{
 
-/* AUTO PLAY MUSIK */
-window.addEventListener("load",()=>{
+bg.play()
 
-let playPromise=bgMusic.play()
-
-if(playPromise!==undefined){
-
-playPromise.catch(()=>{
-
-document.body.addEventListener("click",()=>{
-bgMusic.play()
 },{once:true})
 
-})
-
-}
-
-})
+startGame()
 
 </script>
 
