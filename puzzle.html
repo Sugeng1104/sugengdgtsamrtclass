@@ -2,12 +2,13 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Puzzle Mini</title>
+<title>Puzzle Hewan</title>
 
 <style>
 
 body{
-font-family:Arial;
+margin:0;
+font-family:'Comic Sans MS',sans-serif;
 text-align:center;
 background:linear-gradient(#fff3cd,#ffffff);
 }
@@ -16,94 +17,141 @@ h1{
 margin-top:20px;
 }
 
+#controls{
+margin-top:10px;
+}
+
+select,button{
+padding:10px 15px;
+font-size:16px;
+border-radius:10px;
+border:none;
+margin:5px;
+cursor:pointer;
+}
+
 #board{
-width:300px;
-height:300px;
 margin:20px auto;
 display:grid;
-grid-template-columns:repeat(3,1fr);
-grid-template-rows:repeat(3,1fr);
-gap:5px;
+gap:3px;
+width:320px;
+height:320px;
 border:4px solid #333;
 }
 
 .tile{
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:50px;
-background:white;
+background-size:320px 320px;
 cursor:pointer;
-border-radius:10px;
+border-radius:5px;
 }
 
-button{
-padding:12px 20px;
-font-size:18px;
-border:none;
-border-radius:10px;
-background:#4CAF50;
-color:white;
-cursor:pointer;
-margin-top:10px;
+.tile:hover{
+opacity:0.8;
 }
 
-#animasi{
-font-size:70px;
+#win{
+font-size:60px;
 display:none;
+animation:bounce 0.8s infinite alternate;
+}
+
+@keyframes bounce{
+0%{transform:translateY(0)}
+100%{transform:translateY(-20px)}
+}
+
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+top:-10px;
+animation:fall 3s linear forwards;
+}
+
+@keyframes fall{
+to{transform:translateY(100vh) rotate(720deg)}
 }
 
 </style>
-
 </head>
 
 <body>
 
-<h1>🧩 Puzzle Mini</h1>
+<h1>🧩 Puzzle Hewan</h1>
 
-<div id="board"></div>
+<div id="controls">
 
-<div id="animasi">👏😊👏</div>
+Level :
+
+<select id="level">
+<option value="2">Mudah (2x2)</option>
+<option value="3" selected>Sedang (3x3)</option>
+<option value="4">Sulit (4x4)</option>
+</select>
 
 <button onclick="startGame()">Puzzle Baru</button>
 
-<br><br>
-
 <button onclick="window.location.href='index.html'">
-⬅ Kembali ke Menu
+⬅ Menu
 </button>
 
+</div>
+
+<div id="board"></div>
+
+<div id="win">🎉👏</div>
+
 <audio id="clap" src="assets/sound/clap.mp3"></audio>
+<audio id="guru" src="assets/sound/guru.mp3"></audio>
 
 <script>
 
 const board=document.getElementById("board")
 
-const icons=["🐱","🐶","🐼","🐯","🐸","🐵","🐰","🐻","🦁"]
-
+let size=3
 let tiles=[]
+let emptyIndex
+
+const image="assets/img/puzzle-hewan.jpg"
 
 function startGame(){
 
-tiles=[...icons]
+size=parseInt(document.getElementById("level").value)
 
-shuffle(tiles)
+board.style.gridTemplateColumns=`repeat(${size},1fr)`
+board.style.gridTemplateRows=`repeat(${size},1fr)`
+
+tiles=[]
+
+for(let i=0;i<size*size;i++){
+
+tiles.push(i)
+
+}
+
+emptyIndex=tiles.length-1
+
+shuffle()
 
 render()
 
-document.getElementById("animasi").style.display="none"
+document.getElementById("win").style.display="none"
 
 }
 
-function shuffle(array){
+function shuffle(){
 
-for(let i=array.length-1;i>0;i--){
+for(let i=tiles.length-1;i>0;i--){
 
-let j=Math.floor(Math.random()*(i+1))
+let j=Math.floor(Math.random()*i)
 
-[array[i],array[j]]=[array[j],array[i]]
+let temp=tiles[i]
+tiles[i]=tiles[j]
+tiles[j]=temp
 
 }
+
+emptyIndex=tiles.indexOf(tiles.length-1)
 
 }
 
@@ -111,13 +159,25 @@ function render(){
 
 board.innerHTML=""
 
-tiles.forEach((icon,index)=>{
+tiles.forEach((tile,index)=>{
 
 let div=document.createElement("div")
 
 div.className="tile"
 
-div.innerHTML=icon
+if(tile!=tiles.length-1){
+
+let x=(tile%size)*(320/size)
+let y=Math.floor(tile/size)*(320/size)
+
+div.style.backgroundImage=`url(${image})`
+div.style.backgroundPosition=`-${x}px -${y}px`
+
+}else{
+
+div.style.background="white"
+
+}
 
 div.onclick=()=>move(index)
 
@@ -129,9 +189,18 @@ board.appendChild(div)
 
 function move(index){
 
-if(index<tiles.length-1){
+let validMoves=[
+emptyIndex-1,
+emptyIndex+1,
+emptyIndex-size,
+emptyIndex+size
+]
 
-[tiles[index],tiles[index+1]]=[tiles[index+1],tiles[index]]
+if(validMoves.includes(index)){
+
+[tiles[index],tiles[emptyIndex]]=[tiles[emptyIndex],tiles[index]]
+
+emptyIndex=index
 
 render()
 
@@ -143,24 +212,41 @@ checkWin()
 
 function checkWin(){
 
-let win=true
+for(let i=0;i<tiles.length;i++){
 
-for(let i=0;i<icons.length;i++){
-
-if(tiles[i]!=icons[i]){
-
-win=false
-break
+if(tiles[i]!=i)return
 
 }
 
-}
-
-if(win){
-
-document.getElementById("animasi").style.display="block"
+document.getElementById("win").style.display="block"
 
 document.getElementById("clap").play()
+
+setTimeout(()=>{
+
+document.getElementById("guru").play()
+
+},800)
+
+confetti()
+
+}
+
+function confetti(){
+
+for(let i=0;i<80;i++){
+
+let c=document.createElement("div")
+
+c.className="confetti"
+
+c.style.left=Math.random()*100+"vw"
+
+c.style.background=`hsl(${Math.random()*360},100%,50%)`
+
+document.body.appendChild(c)
+
+setTimeout(()=>c.remove(),3000)
 
 }
 
@@ -170,9 +256,9 @@ startGame()
 
 </script>
 
-<br><br>
+<br>
 
-<div style="font-size:14px">
+<div style="margin-bottom:10px;font-size:14px">
 Dibuat oleh 
 <a href="https://wa.me/6283862505875">@SugengHidayat</a>
 </div>
