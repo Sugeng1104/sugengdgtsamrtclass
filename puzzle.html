@@ -114,12 +114,21 @@ to{transform:translateY(100vh) rotate(720deg)}
 
 <div id="win">🎉</div>
 
+<!-- AUDIO -->
 <audio id="clap" src="assets/sound/clap.mp3"></audio>
 <audio id="guru" src="assets/sound/guru.mp3"></audio>
+
+<!-- MUSIK LATAR -->
+<audio id="bgMusic" loop>
+<source src="assets/sound/misteri.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 
 const board=document.getElementById("board")
+const bgMusic=document.getElementById("bgMusic")
+
+bgMusic.volume=0.25
 
 let size=3
 let tiles=[]
@@ -297,6 +306,25 @@ setTimeout(()=>c.remove(),3000)
 }
 
 startGame()
+
+/* AUTO PLAY MUSIK */
+window.addEventListener("load",()=>{
+
+let playPromise=bgMusic.play()
+
+if(playPromise!==undefined){
+
+playPromise.catch(()=>{
+
+document.body.addEventListener("click",()=>{
+bgMusic.play()
+},{once:true})
+
+})
+
+}
+
+})
 
 </script>
 
