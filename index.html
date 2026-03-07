@@ -3,144 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>PAUD Digital Smart Class</title>
 
 <style>
 
 body{
-  margin:0;
-  font-family:'Comic Sans MS', sans-serif;
-  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-  overflow:hidden;
-}
-
-/* Bintang background */
-
-.star{
-  position:absolute;
-  width:6px;
-  height:6px;
-  background:white;
-  border-radius:50%;
-  animation:fall linear infinite;
-}
-
-@keyframes fall{
-  from{
-    transform:translateY(-10vh);
-    opacity:1;
-  }
-  to{
-    transform:translateY(110vh);
-    opacity:0;
-  }
+margin:0;
+font-family:'Comic Sans MS',sans-serif;
+text-align:center;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+overflow:hidden;
 }
 
 .wrapper{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
-  text-align:center;
+text-align:center;
 }
 
 h1{
-  font-size:40px;
-  margin-bottom:30px;
-  animation:bounce 2s infinite;
+font-size:45px;
+margin-bottom:10px;
 }
 
-@keyframes bounce{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-  100%{transform:translateY(0)}
+.subtitle{
+font-size:20px;
+margin-bottom:20px;
 }
 
 .grid{
-  display:grid;
-  grid-template-columns:repeat(3,200px);
-  gap:25px;
-  justify-content:center;
+display:grid;
+grid-template-columns:repeat(3,220px);
+gap:30px;
+justify-content:center;
 }
 
 .card{
-
-  background:white;
-  padding:20px;
-  border-radius:25px;
-  box-shadow:0 10px 20px rgba(0,0,0,0.2);
-  transition:0.3s;
+background:white;
+padding:20px;
+border-radius:25px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+transition:0.3s;
 }
 
 .card:hover{
-  transform:scale(1.1);
+transform:scale(1.1);
 }
 
 .icon{
-  font-size:70px;
-  animation:float 2s infinite ease-in-out;
+font-size:80px;
+animation:float 2s infinite ease-in-out;
+}
+
+.card button{
+margin-top:15px;
+padding:12px 20px;
+border:none;
+border-radius:20px;
+font-size:18px;
+cursor:pointer;
+background:#ffd700;
+}
+
+.card button:hover{
+background:#ffa500;
 }
 
 @keyframes float{
-  0%{transform:translateY(0)}
-  50%{transform:translateY(-10px)}
-  100%{transform:translateY(0)}
+0%{transform:translateY(0)}
+50%{transform:translateY(-10px)}
+100%{transform:translateY(0)}
 }
 
-button{
-
-  margin-top:10px;
-  padding:10px 20px;
-  border:none;
-  border-radius:20px;
-  font-size:18px;
-  cursor:pointer;
-  background:#ffd700;
-  transition:0.2s;
-
+.teacher{
+position:absolute;
+left:20px;
+bottom:20px;
+font-size:80px;
+animation:wave 2s infinite;
 }
 
-button:hover{
-  background:#ffa500;
+@keyframes wave{
+0%{transform:rotate(0deg)}
+50%{transform:rotate(10deg)}
+100%{transform:rotate(0deg)}
 }
 
-button:active{
-  transform:scale(0.9);
+.musicBtn{
+position:absolute;
+top:20px;
+right:20px;
+background:white;
+padding:10px 15px;
+border-radius:20px;
+cursor:pointer;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
-/* Creator */
+.star{
+font-size:22px;
+margin-bottom:15px;
+}
 
 .creator{
-  position:fixed;
-  bottom:10px;
-  width:100%;
-  text-align:center;
-  font-size:15px;
-  font-weight:bold;
+position:fixed;
+bottom:10px;
+width:100%;
+font-weight:bold;
 }
 
 .creator a{
-  color:#ff0066;
-  text-decoration:none;
+color:#ff0066;
+text-decoration:none;
 }
-
-/* Responsive */
 
 @media(max-width:900px){
-
 .grid{
-  grid-template-columns:repeat(2,180px);
+grid-template-columns:repeat(2,200px);
 }
-
 }
 
 @media(max-width:600px){
-
 .grid{
-  grid-template-columns:repeat(1,180px);
+grid-template-columns:repeat(1,200px);
 }
-
 }
 
 </style>
@@ -148,21 +136,14 @@ button:active{
 
 <body>
 
-<!-- AUDIO -->
-
-<audio id="bgMusic" loop>
-<source src="assets/sound/latarmusik.mp3" type="audio/mpeg">
-</audio>
-
-<audio id="ringSound">
-<source src="assets/sound/ring.mp3" type="audio/mpeg">
-</audio>
+<div class="musicBtn" onclick="toggleMusic()">🔊 Musik</div>
 
 <div class="wrapper">
 
-<div>
-
 <h1>🎮 PAUD Digital Smart Class</h1>
+<div class="subtitle">Belajar Sambil Bermain</div>
+
+<div class="star" id="totalStar">⭐ 0</div>
 
 <div class="grid">
 
@@ -192,7 +173,7 @@ button:active{
 </div>
 
 <div class="card">
-<div class="icon">🧠</div>
+<div class="icon">🧩</div>
 <button onclick="openGame('puzzle.html')">Puzzle Mini</button>
 </div>
 
@@ -200,71 +181,92 @@ button:active{
 
 </div>
 
-</div>
+<div class="teacher">👩‍🏫</div>
 
 <div class="creator">
 Dibuat oleh 
-<a href="https://wa.me/6283862505875" target="_blank">
-@SugengHidayat
-</a>
+<a href="https://wa.me/6283862505875" target="_blank">@SugengHidayat</a>
 </div>
+
+<!-- AUDIO -->
+<audio id="bgMusic" loop>
+<source src="assets/sound/latarmusik.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="ringSound">
+<source src="assets/sound/ring.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 
-/* MUSIK LATAR */
-
 const bgMusic=document.getElementById("bgMusic")
-bgMusic.volume=0
+const ringSound=document.getElementById("ringSound")
 
-window.addEventListener("click",function(){
+function teacherGreeting(){
 
-bgMusic.play()
+let text="Halo anak anak. Ayo kita belajar sambil bermain."
 
-let fade=setInterval(function(){
+let speech=new SpeechSynthesisUtterance(text)
 
-if(bgMusic.volume<0.5){
-bgMusic.volume+=0.05
-}else{
-clearInterval(fade)
+speech.lang="id-ID"
+speech.pitch=1.2
+speech.rate=0.9
+
+speechSynthesis.speak(speech)
+
 }
 
-},200)
+window.addEventListener("load",()=>{
 
+showTotalScore()
+
+setTimeout(teacherGreeting,1000)
+
+let playPromise=bgMusic.play()
+
+if(playPromise!==undefined){
+playPromise.catch(()=>{
+document.body.addEventListener("click",()=>{
+bgMusic.play()
 },{once:true})
+})
+}
 
-/* SOUND RING */
+})
 
-const ringSound=document.getElementById("ringSound")
+function toggleMusic(){
+
+if(bgMusic.paused){
+bgMusic.play()
+}else{
+bgMusic.pause()
+}
+
+}
 
 function openGame(url){
 
 ringSound.play()
 
-setTimeout(function(){
+setTimeout(()=>{
 window.location.href=url
 },400)
 
 }
 
-/* ANIMASI BINTANG */
+function showTotalScore(){
 
-function createStars(){
+let data=JSON.parse(localStorage.getItem("paud_score")) || {}
 
-for(let i=0;i<40;i++){
+let total=0
 
-let star=document.createElement("div")
-star.className="star"
-
-star.style.left=Math.random()*100+"vw"
-star.style.animationDuration=2+Math.random()*5+"s"
-
-document.body.appendChild(star)
-
+for(let game in data){
+total+=data[game]
 }
 
-}
+document.getElementById("totalStar").innerHTML="⭐ Total Bintang : "+total
 
-createStars()
+}
 
 </script>
 
