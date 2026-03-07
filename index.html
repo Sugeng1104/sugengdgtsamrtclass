@@ -2,37 +2,70 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>PAUD Digital Smart Class</title>
-<link rel="stylesheet" href="css/style.css">
 
 <style>
 
 body{
+  margin:0;
+  font-family:'Comic Sans MS', sans-serif;
+  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
+  overflow:hidden;
+}
+
+/* Bintang background */
+
+.star{
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:white;
+  border-radius:50%;
+  animation:fall linear infinite;
+}
+
+@keyframes fall{
+  from{
+    transform:translateY(-10vh);
+    opacity:1;
+  }
+  to{
+    transform:translateY(110vh);
+    opacity:0;
+  }
+}
+
+.wrapper{
   display:flex;
   justify-content:center;
   align-items:center;
   height:100vh;
-  margin:0;
-  background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-  font-family:Arial;
-}
-
-.wrapper{
   text-align:center;
 }
 
 h1{
+  font-size:40px;
   margin-bottom:30px;
+  animation:bounce 2s infinite;
+}
+
+@keyframes bounce{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+  100%{transform:translateY(0)}
 }
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(3, 200px);
-  gap:30px;
+  grid-template-columns:repeat(3,200px);
+  gap:25px;
   justify-content:center;
 }
 
 .card{
+
   background:white;
   padding:20px;
   border-radius:25px;
@@ -49,36 +82,65 @@ h1{
   animation:float 2s infinite ease-in-out;
 }
 
-.card button{
-  margin-top:15px;
+@keyframes float{
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+  100%{transform:translateY(0)}
+}
+
+button{
+
+  margin-top:10px;
   padding:10px 20px;
   border:none;
   border-radius:20px;
   font-size:18px;
   cursor:pointer;
   background:#ffd700;
+  transition:0.2s;
+
 }
 
-.card button:hover{
+button:hover{
   background:#ffa500;
 }
 
-@keyframes float{
-  0%{transform:translateY(0);}
-  50%{transform:translateY(-10px);}
-  100%{transform:translateY(0);}
+button:active{
+  transform:scale(0.9);
 }
 
+/* Creator */
+
+.creator{
+  position:fixed;
+  bottom:10px;
+  width:100%;
+  text-align:center;
+  font-size:15px;
+  font-weight:bold;
+}
+
+.creator a{
+  color:#ff0066;
+  text-decoration:none;
+}
+
+/* Responsive */
+
 @media(max-width:900px){
-  .grid{
-    grid-template-columns:repeat(2,180px);
-  }
+
+.grid{
+  grid-template-columns:repeat(2,180px);
+}
+
 }
 
 @media(max-width:600px){
-  .grid{
-    grid-template-columns:repeat(1,180px);
-  }
+
+.grid{
+  grid-template-columns:repeat(1,180px);
+}
+
 }
 
 </style>
@@ -87,16 +149,18 @@ h1{
 <body>
 
 <!-- AUDIO -->
+
 <audio id="bgMusic" loop>
-  <source src="assets/sound/latarmusik.mp3" type="audio/mpeg">
+<source src="assets/sound/latarmusik.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="ringSound">
-  <source src="assets/sound/ring.mp3" type="audio/mpeg">
+<source src="assets/sound/ring.mp3" type="audio/mpeg">
 </audio>
 
-
 <div class="wrapper">
+
+<div>
 
 <h1>🎮 PAUD Digital Smart Class</h1>
 
@@ -133,41 +197,74 @@ h1{
 </div>
 
 </div>
+
 </div>
 
+</div>
+
+<div class="creator">
+Dibuat oleh 
+<a href="https://wa.me/6283862505875" target="_blank">
+@SugengHidayat
+</a>
+</div>
 
 <script>
 
-const bgMusic = document.getElementById("bgMusic");
-const ringSound = document.getElementById("ringSound");
+/* MUSIK LATAR */
 
-/* mencoba autoplay saat halaman load */
-window.addEventListener("load", function(){
-    bgMusic.volume = 0.5;
+const bgMusic=document.getElementById("bgMusic")
+bgMusic.volume=0
 
-    let playPromise = bgMusic.play();
+window.addEventListener("click",function(){
 
-    if(playPromise !== undefined){
-        playPromise.catch(function(){
-            /* jika autoplay diblok browser,
-               musik akan aktif saat klik pertama */
-            document.body.addEventListener("click", function(){
-                bgMusic.play();
-            }, {once:true});
-        });
-    }
-});
+bgMusic.play()
 
+let fade=setInterval(function(){
+
+if(bgMusic.volume<0.5){
+bgMusic.volume+=0.05
+}else{
+clearInterval(fade)
+}
+
+},200)
+
+},{once:true})
+
+/* SOUND RING */
+
+const ringSound=document.getElementById("ringSound")
 
 function openGame(url){
 
-    ringSound.play();
+ringSound.play()
 
-    setTimeout(function(){
-        window.location.href = url;
-    },400);
+setTimeout(function(){
+window.location.href=url
+},400)
 
 }
+
+/* ANIMASI BINTANG */
+
+function createStars(){
+
+for(let i=0;i<40;i++){
+
+let star=document.createElement("div")
+star.className="star"
+
+star.style.left=Math.random()*100+"vw"
+star.style.animationDuration=2+Math.random()*5+"s"
+
+document.body.appendChild(star)
+
+}
+
+}
+
+createStars()
 
 </script>
 
