@@ -28,9 +28,9 @@ border:4px solid #333;
 }
 
 .tile{
-background-size:360px 360px;
 border-radius:6px;
 cursor:pointer;
+background-repeat:no-repeat;
 }
 
 .tile:hover{
@@ -127,14 +127,14 @@ let empty
 let star=0
 
 const images=[
-"assets/img/puzzle1.jpg",
-"assets/img/puzzle2.jpg",
-"assets/img/puzzle3.jpg",
-"assets/img/puzzle4.jpg",
-"assets/img/puzzle5.jpg"
+"assets/images/puzzle/puzzle1.jpg",
+"assets/images/puzzle/puzzle2.jpg",
+"assets/images/puzzle/puzzle3.jpg",
+"assets/images/puzzle/puzzle4.jpg",
+"assets/images/puzzle/puzzle5.jpg"
 ]
 
-let currentImage=images[Math.floor(Math.random()*images.length)]
+let currentImage=""
 
 function startGame(){
 
@@ -151,13 +151,13 @@ tiles.push(i)
 
 empty=tiles.length-1
 
+currentImage=images[Math.floor(Math.random()*images.length)]
+
 shuffle()
 
 render()
 
 document.getElementById("win").style.display="none"
-
-currentImage=images[Math.floor(Math.random()*images.length)]
 
 }
 
@@ -165,7 +165,7 @@ function shuffle(){
 
 for(let i=tiles.length-1;i>0;i--){
 
-let j=Math.floor(Math.random()*i)
+let j=Math.floor(Math.random()*(i+1))
 
 let temp=tiles[i]
 tiles[i]=tiles[j]
@@ -181,18 +181,24 @@ function render(){
 
 board.innerHTML=""
 
+let tileSize=360/size
+
 tiles.forEach((tile,index)=>{
 
 let div=document.createElement("div")
 
 div.className="tile"
 
+div.style.width=tileSize+"px"
+div.style.height=tileSize+"px"
+
 if(tile!=tiles.length-1){
 
-let x=(tile%size)*(360/size)
-let y=Math.floor(tile/size)*(360/size)
+let x=(tile%size)*tileSize
+let y=Math.floor(tile/size)*tileSize
 
 div.style.backgroundImage=`url(${currentImage})`
+div.style.backgroundSize="360px 360px"
 div.style.backgroundPosition=`-${x}px -${y}px`
 
 }else{
@@ -211,14 +217,18 @@ board.appendChild(div)
 
 function move(index){
 
-let valid=[
-empty-1,
-empty+1,
-empty-size,
-empty+size
-]
+let row=Math.floor(index/size)
+let col=index%size
 
-if(valid.includes(index)){
+let emptyRow=Math.floor(empty/size)
+let emptyCol=empty%size
+
+let valid=false
+
+if(row==emptyRow && Math.abs(col-emptyCol)==1) valid=true
+if(col==emptyCol && Math.abs(row-emptyRow)==1) valid=true
+
+if(valid){
 
 [tiles[index],tiles[empty]]=[tiles[empty],tiles[index]]
 
@@ -268,7 +278,7 @@ localStorage.setItem("paud_score",JSON.stringify(data))
 
 function confetti(){
 
-for(let i=0;i<100;i++){
+for(let i=0;i<120;i++){
 
 let c=document.createElement("div")
 
