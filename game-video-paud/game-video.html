@@ -2,331 +2,330 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Game Video Gigi PAUD</title>
+<title>Game Video Gigi - PAUD ULTRA PRO</title>
 
 <style>
 
 body{
 font-family:Arial;
 text-align:center;
-background:linear-gradient(#dff9fb,#ffffff);
+background:linear-gradient(#d4f1ff,#ffffff);
 margin:0;
+padding:20px;
 }
 
 h1{
-margin-top:20px;
+color:#333;
 }
 
-#tutorial{
-font-size:22px;
-margin:30px;
-}
-
-button{
-padding:15px 25px;
-font-size:18px;
-border:none;
-border-radius:15px;
-background:#6ab04c;
-color:white;
-cursor:pointer;
-}
-
-button:hover{
-background:#27ae60;
-}
-
-#playerContainer{
+#videoBox{
 display:flex;
 justify-content:center;
-margin-top:20px;
+margin:20px;
 }
 
-#player iframe{
-border-radius:12px;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
+iframe{
+width:720px;
+height:405px;
+border-radius:10px;
 }
 
-#pertanyaan{
+#soalBox{
 display:none;
 margin-top:20px;
 }
 
-.opsi{
+.pilihan{
 width:120px;
-margin:15px;
+margin:10px;
 cursor:pointer;
 transition:0.3s;
 }
 
-.opsi:hover{
-transform:scale(1.1);
-}
-
-#hasil{
-font-size:45px;
-margin-top:20px;
-display:none;
+.pilihan:hover{
+transform:scale(1.15);
 }
 
 #score{
-font-size:26px;
-margin-top:10px;
+font-size:24px;
+margin-top:20px;
 }
 
-.confetti{
-position:fixed;
-width:10px;
-height:10px;
-top:-10px;
-animation:fall 3s linear forwards;
+#bintang{
+font-size:30px;
+color:gold;
 }
 
-@keyframes fall{
-to{
-transform:translateY(100vh) rotate(720deg);
+#animasi{
+font-size:80px;
+display:none;
 }
+
+button{
+padding:12px 20px;
+font-size:18px;
+border:none;
+border-radius:10px;
+background:#4CAF50;
+color:white;
+cursor:pointer;
+margin-top:15px;
 }
 
 </style>
-</head>
 
+</head>
 <body>
 
-<h1>🦷 Game Video Gigi</h1>
-
-<div id="score">⭐ 0</div>
+<h1>🦷 Game Video Gigi Pintar</h1>
 
 <div id="tutorial">
+<h2>Cara Bermain</h2>
 
-👋 Halo anak-anak!<br><br>
+<p>
+1️⃣ Tonton video sampai selesai<br>
+2️⃣ Video akan diputar lagi<br>
+3️⃣ Saat video berhenti, jawab pertanyaan<br>
+4️⃣ Kumpulkan bintang ⭐
+</p>
 
-1️⃣ Tonton video dulu ya<br>
-2️⃣ Video akan berhenti<br>
-3️⃣ Pilih gambar yang benar<br><br>
+<button onclick="mulaiGame()">Mulai Game</button>
+</div>
 
-<button onclick="mulai()">▶ Mulai Bermain</button>
+
+<div id="videoBox" style="display:none">
+<iframe id="video"
+src="https://www.youtube.com/embed/V_M-VjoGpLg?enablejsapi=1"
+allow="autoplay"></iframe>
+</div>
+
+<div id="soalBox">
+
+<h2 id="pertanyaan"></h2>
+
+<div id="pilihanBox"></div>
 
 </div>
 
-<div id="playerContainer">
-<div id="player"></div>
-</div>
+<div id="score">Skor: 0</div>
+<div id="bintang"></div>
 
-<div id="pertanyaan">
+<div id="animasi">🎉👏😄</div>
 
-<h2 id="soal"></h2>
-
-<div id="opsiArea"></div>
-
-</div>
-
-<div id="hasil"></div>
-
-<audio id="benar" src="assets/sound/clap.mp3"></audio>
-<audio id="salah" src="assets/sound/wrong.mp3"></audio>
+<audio id="benar" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3f4d9c7eaa.mp3"></audio>
+<audio id="salah" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7b3caa0d7b.mp3"></audio>
 
 <script src="https://www.youtube.com/iframe_api"></script>
 
 <script>
 
 let player
-let tahap=1
-let score=0
-let soalIndex=0
+let skor = 0
+let soalIndex = 0
+let playCount = 0
+
+const waktuSoal=[8,16,25,34,43,52,60,70,80,90]
 
 const soal=[
 
 {
-waktu:10,
-tanya:"Apa yang dipakai untuk membersihkan gigi?",
+t:"Apa yang kita sikat?",
+jawab:"gigi",
+opsi:["gigi","telinga","hidung"]
+},
+
+{
+t:"Apa yang dipakai untuk sikat gigi?",
 jawab:"sikat",
-opsi:[
-{gambar:"assets/img/sikat.png",nilai:"sikat"},
-{gambar:"assets/img/permen.png",nilai:"permen"},
-{gambar:"assets/img/kentang.png",nilai:"kentang"}
-]
+opsi:["sendok","sikat","pensil"]
 },
 
 {
-waktu:25,
-tanya:"Kapan kita sikat gigi?",
+t:"Kapan kita sikat gigi?",
 jawab:"pagi",
-opsi:[
-{gambar:"assets/img/pagi.png",nilai:"pagi"},
-{gambar:"assets/img/tidur.png",nilai:"tidur"},
-{gambar:"assets/img/main.png",nilai:"main"}
-]
+opsi:["pagi","malam","siang"]
 },
 
 {
-waktu:40,
-tanya:"Apa yang bisa membuat gigi berlubang?",
+t:"Apa yang dipakai bersama sikat?",
+jawab:"pasta",
+opsi:["pasta","sabun","minyak"]
+},
+
+{
+t:"Apa yang membuat gigi kuat?",
+jawab:"susu",
+opsi:["susu","coklat","permen"]
+},
+
+{
+t:"Apa yang membuat gigi rusak?",
 jawab:"permen",
-opsi:[
-{gambar:"assets/img/permen.png",nilai:"permen"},
-{gambar:"assets/img/wortel.png",nilai:"wortel"},
-{gambar:"assets/img/susu.png",nilai:"susu"}
-]
+opsi:["permen","sayur","buah"]
+},
+
+{
+t:"Gigi dipakai untuk?",
+jawab:"mengunyah",
+opsi:["mengunyah","berlari","tidur"]
+},
+
+{
+t:"Kalau sakit gigi pergi ke?",
+jawab:"dokter",
+opsi:["dokter","guru","pilot"]
+},
+
+{
+t:"Berapa kali sikat gigi?",
+jawab:"dua",
+opsi:["satu","dua","lima"]
+},
+
+{
+t:"Setelah makan harus?",
+jawab:"sikat",
+opsi:["tidur","sikat","lari"]
 }
 
 ]
+
 
 function onYouTubeIframeAPIReady(){
 
-player=new YT.Player('player',{
-height:'360',
-width:'640',
-videoId:'V_M-VjoGpLg',
-playerVars:{rel:0},
-events:{'onStateChange':stateChange}
+player = new YT.Player('video',{
+
+events:{
+'onReady':onPlayerReady,
+'onStateChange':onPlayerStateChange
+}
+
 })
 
 }
 
-function mulai(){
+
+function onPlayerReady(){}
+
+
+function mulaiGame(){
 
 document.getElementById("tutorial").style.display="none"
+document.getElementById("videoBox").style.display="block"
 
 player.playVideo()
 
-setInterval(cekWaktu,500)
+cekWaktu()
 
 }
 
-function stateChange(event){
-
-if(event.data==YT.PlayerState.ENDED && tahap==1){
-
-tahap=2
-
-player.seekTo(0)
-
-player.playVideo()
-
-}
-
-}
 
 function cekWaktu(){
 
-if(tahap==2){
+setInterval(function(){
 
-let waktuVideo=player.getCurrentTime()
+if(player.getPlayerState()==1){
 
-let target=soal[soalIndex].waktu
+let time = Math.floor(player.getCurrentTime())
 
-if(waktuVideo>target){
+if(waktuSoal.includes(time)){
 
 player.pauseVideo()
-
 tampilkanSoal()
 
-tahap=3
-
 }
 
 }
 
+},1000)
+
 }
+
 
 function tampilkanSoal(){
 
-let data=soal[soalIndex]
+if(soalIndex>=soal.length){
 
-document.getElementById("pertanyaan").style.display="block"
+player.playVideo()
+return
+}
 
-document.getElementById("soal").innerHTML=data.tanya
+document.getElementById("soalBox").style.display="block"
 
-let area=document.getElementById("opsiArea")
+let s=soal[soalIndex]
 
-area.innerHTML=""
+document.getElementById("pertanyaan").innerHTML=s.t
 
-data.opsi.forEach(o=>{
+let html=""
 
-let img=document.createElement("img")
+s.opsi.forEach(function(p){
 
-img.src=o.gambar
-
-img.className="opsi"
-
-img.onclick=()=>cek(o.nilai)
-
-area.appendChild(img)
+html+=`
+<img src="https://dummyimage.com/120x120/ffffff/000000&text=${p}"
+class="pilihan"
+onclick="jawab('${p}')">
+`
 
 })
 
+document.getElementById("pilihanBox").innerHTML=html
+
 }
 
-function cek(pilih){
 
-let data=soal[soalIndex]
+function jawab(p){
 
-let hasil=document.getElementById("hasil")
+let benar=soal[soalIndex].jawab
 
-if(pilih==data.jawab){
+if(p==benar){
 
+skor++
 document.getElementById("benar").play()
-
-hasil.innerHTML="🎉 Hebat!"
-
-score++
-
-document.getElementById("score").innerHTML="⭐ "+score
-
-confetti()
-
-soalIndex++
-
-if(soalIndex<soal.length){
+document.getElementById("animasi").style.display="block"
 
 setTimeout(()=>{
-
-hasil.style.display="none"
-
-document.getElementById("pertanyaan").style.display="none"
-
-player.playVideo()
-
-tahap=2
-
-},2000)
-
-}
-else{
-
-hasil.innerHTML="🏆 Kamu Hebat!"
+document.getElementById("animasi").style.display="none"
+},1500)
 
 }
 
-}
 else{
 
 document.getElementById("salah").play()
 
-hasil.innerHTML="❌ Coba lagi"
+}
+
+document.getElementById("score").innerHTML="Skor: "+skor
+document.getElementById("bintang").innerHTML="⭐".repeat(skor)
+
+soalIndex++
+
+document.getElementById("soalBox").style.display="none"
+
+player.playVideo()
 
 }
 
-hasil.style.display="block"
+
+function onPlayerStateChange(event){
+
+if(event.data==0){
+
+playCount++
+
+if(playCount==1){
+
+player.seekTo(0)
+player.playVideo()
 
 }
 
-function confetti(){
+else{
 
-for(let i=0;i<80;i++){
+document.getElementById("animasi").style.display="block"
+document.getElementById("animasi").innerHTML="🏆 Hebat! Game Selesai!"
 
-let c=document.createElement("div")
-
-c.className="confetti"
-
-c.style.left=Math.random()*100+"vw"
-
-c.style.background=`hsl(${Math.random()*360},100%,50%)`
-
-document.body.appendChild(c)
-
-setTimeout(()=>c.remove(),3000)
+}
 
 }
 
