@@ -244,9 +244,9 @@ board.appendChild(div)
 
 }
 
-function swap(index){
+function swap(from,to){
 
-[tiles[index],tiles[dragIndex]]=[tiles[dragIndex],tiles[index]]
+[tiles[from],tiles[to]]=[tiles[to],tiles[from]]
 
 render()
 
@@ -315,6 +315,8 @@ bg.play()
 },{once:true})
 
 startGame()
+
+const starDiv=document.getElementById("star")
 
 </script>
 
