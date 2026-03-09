@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<title>Game Video PAUD</title>
+<title>Game Video Gigi PAUD</title>
 
 <style>
 
@@ -17,15 +17,9 @@ h1{
 margin-top:20px;
 }
 
-#video{
-width:500px;
-border-radius:12px;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
-}
-
 #tutorial{
 font-size:22px;
-margin:20px;
+margin:30px;
 }
 
 button{
@@ -33,16 +27,21 @@ padding:15px 25px;
 font-size:18px;
 border:none;
 border-radius:15px;
-cursor:pointer;
 background:#6ab04c;
 color:white;
+cursor:pointer;
 }
 
 button:hover{
 background:#27ae60;
 }
 
-#pilihan{
+#player{
+margin-top:20px;
+display:none;
+}
+
+#pertanyaan{
 display:none;
 margin-top:20px;
 }
@@ -59,19 +58,14 @@ transform:scale(1.1);
 }
 
 #hasil{
-font-size:50px;
-display:none;
+font-size:45px;
 margin-top:20px;
+display:none;
 }
 
 #score{
-font-size:24px;
-margin-top:15px;
-}
-
-.star{
-font-size:40px;
-color:gold;
+font-size:25px;
+margin-top:10px;
 }
 
 .confetti{
@@ -83,7 +77,9 @@ animation:fall 3s linear forwards;
 }
 
 @keyframes fall{
-to{transform:translateY(100vh) rotate(720deg)}
+to{
+transform:translateY(100vh) rotate(720deg);
+}
 }
 
 </style>
@@ -91,88 +87,117 @@ to{transform:translateY(100vh) rotate(720deg)}
 
 <body>
 
-<h1>🎬 Game Video Anak</h1>
+<h1>🦷 Game Video Gigi</h1>
+
+<div id="score">⭐ 0</div>
 
 <div id="tutorial">
+
 👋 Halo anak-anak!<br><br>
-1️⃣ Tonton videonya dulu ya.<br>
-2️⃣ Nanti videonya diputar lagi.<br>
-3️⃣ Jika berhenti, pilih gambar yang benar!<br><br>
 
-<button onclick="mulai()">▶ Mulai</button>
-</div>
+1️⃣ Tonton video dulu ya<br>
+2️⃣ Nanti video diputar lagi<br>
+3️⃣ Jika video berhenti, pilih gambar yang benar<br><br>
 
-<br>
-
-<video id="video" controls style="display:none">
-<source src="assets/video/hewan.mp4" type="video/mp4">
-</video>
-
-<div id="pilihan">
-
-<h2>Apa hewan yang muncul di video?</h2>
-
-<img src="assets/img/kucing.png" class="opsi" onclick="cek('kucing')">
-
-<img src="assets/img/ayam.png" class="opsi" onclick="cek('ayam')">
-
-<img src="assets/img/sapi.png" class="opsi" onclick="cek('sapi')">
+<button onclick="mulai()">▶ Mulai Bermain</button>
 
 </div>
+
+
+<div id="player"></div>
+
+
+<div id="pertanyaan">
+
+<h2>Apa yang dipakai untuk membersihkan gigi?</h2>
+
+<img src="assets/img/sikat.png" class="opsi" onclick="cek('sikat')">
+
+<img src="assets/img/permen.png" class="opsi" onclick="cek('permen')">
+
+<img src="assets/img/kentang.png" class="opsi" onclick="cek('kentang')">
+
+</div>
+
 
 <div id="hasil"></div>
 
-<div id="score">⭐ 0</div>
 
 <audio id="benar" src="assets/sound/clap.mp3"></audio>
 <audio id="salah" src="assets/sound/wrong.mp3"></audio>
 
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
 <script>
 
-let video=document.getElementById("video")
-let pilihan=document.getElementById("pilihan")
-let hasil=document.getElementById("hasil")
-let score=0
-let jawaban="kucing"
+let player
 let tahap=1
+let score=0
+let jawaban="sikat"
+
+function onYouTubeIframeAPIReady(){
+
+player=new YT.Player('player',{
+height:'360',
+width:'640',
+videoId:'V_M-VjoGpLg',
+playerVars:{
+'rel':0
+},
+events:{
+'onStateChange':onPlayerStateChange
+}
+})
+
+}
 
 function mulai(){
 
 document.getElementById("tutorial").style.display="none"
+document.getElementById("player").style.display="block"
 
-video.style.display="block"
+player.playVideo()
 
-video.play()
+setInterval(cekWaktu,500)
 
 }
 
-video.onended=function(){
+function onPlayerStateChange(event){
 
-if(tahap==1){
+if(event.data==YT.PlayerState.ENDED && tahap==1){
 
 tahap=2
 
-video.currentTime=0
+player.seekTo(0)
 
-video.play()
-
-}
+player.playVideo()
 
 }
 
-video.ontimeupdate=function(){
+}
 
-if(tahap==2 && video.currentTime>4){
+function cekWaktu(){
 
-video.pause()
+if(tahap==2){
 
-pilihan.style.display="block"
+let waktu=player.getCurrentTime()
+
+if(waktu>12){
+
+player.pauseVideo()
+
+document.getElementById("pertanyaan").style.display="block"
+
+}
 
 }
 
 }
 
 function cek(pilih){
+
+let hasil=document.getElementById("hasil")
 
 if(pilih==jawaban){
 
@@ -187,7 +212,6 @@ document.getElementById("score").innerHTML="⭐ "+score
 confetti()
 
 }
-
 else{
 
 document.getElementById("salah").play()
