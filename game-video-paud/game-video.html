@@ -6,13 +6,6 @@
 
 <style>
 
-#playerContainer{
-display:flex;
-justify-content:center;
-align-items:center;
-margin-top:20px;
-}
-
 body{
 font-family:Arial;
 text-align:center;
@@ -43,9 +36,15 @@ button:hover{
 background:#27ae60;
 }
 
-#player{
+#playerContainer{
+display:flex;
+justify-content:center;
 margin-top:20px;
-display:none;
+}
+
+#player iframe{
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
 }
 
 #pertanyaan{
@@ -71,7 +70,7 @@ display:none;
 }
 
 #score{
-font-size:25px;
+font-size:26px;
 margin-top:10px;
 }
 
@@ -89,12 +88,6 @@ transform:translateY(100vh) rotate(720deg);
 }
 }
 
-#player iframe{
-max-width:90vw;
-border-radius:12px;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
-}
-
 </style>
 </head>
 
@@ -110,37 +103,28 @@ box-shadow:0 0 15px rgba(0,0,0,0.3);
 
 1️⃣ Tonton video dulu ya<br>
 2️⃣ Nanti video diputar lagi<br>
-3️⃣ Jika video berhenti, pilih gambar yang benar<br><br>
+3️⃣ Jika video berhenti pilih gambar yang benar<br><br>
 
 <button onclick="mulai()">▶ Mulai Bermain</button>
 
 </div>
 
-
 <div id="playerContainer">
 <div id="player"></div>
 </div>
 
-
 <div id="pertanyaan">
 
-<h2>Apa yang dipakai untuk membersihkan gigi?</h2>
+<h2 id="soal"></h2>
 
-<img src="assets/img/sikat.png" class="opsi" onclick="cek('sikat')">
-
-<img src="assets/img/permen.png" class="opsi" onclick="cek('permen')">
-
-<img src="assets/img/kentang.png" class="opsi" onclick="cek('kentang')">
+<div id="opsiArea"></div>
 
 </div>
 
-
 <div id="hasil"></div>
-
 
 <audio id="benar" src="assets/sound/clap.mp3"></audio>
 <audio id="salah" src="assets/sound/wrong.mp3"></audio>
-
 
 <script src="https://www.youtube.com/iframe_api"></script>
 
@@ -149,7 +133,41 @@ box-shadow:0 0 15px rgba(0,0,0,0.3);
 let player
 let tahap=1
 let score=0
-let jawaban="sikat"
+let soalIndex=0
+
+const soal=[
+
+{
+tanya:"Apa yang dipakai untuk membersihkan gigi?",
+jawab:"sikat",
+opsi:[
+{gambar:"assets/img/sikat.png",nilai:"sikat"},
+{gambar:"assets/img/permen.png",nilai:"permen"},
+{gambar:"assets/img/kentang.png",nilai:"kentang"}
+]
+},
+
+{
+tanya:"Kapan kita sikat gigi?",
+jawab:"pagi",
+opsi:[
+{gambar:"assets/img/pagi.png",nilai:"pagi"},
+{gambar:"assets/img/tidur.png",nilai:"tidur"},
+{gambar:"assets/img/main.png",nilai:"main"}
+]
+},
+
+{
+tanya:"Apa yang bisa membuat gigi berlubang?",
+jawab:"permen",
+opsi:[
+{gambar:"assets/img/permen.png",nilai:"permen"},
+{gambar:"assets/img/wortel.png",nilai:"wortel"},
+{gambar:"assets/img/susu.png",nilai:"susu"}
+]
+}
+
+]
 
 function onYouTubeIframeAPIReady(){
 
@@ -157,12 +175,8 @@ player=new YT.Player('player',{
 height:'360',
 width:'640',
 videoId:'V_M-VjoGpLg',
-playerVars:{
-'rel':0
-},
-events:{
-'onStateChange':onPlayerStateChange
-}
+playerVars:{rel:0},
+events:{'onStateChange':stateChange}
 })
 
 }
@@ -170,7 +184,6 @@ events:{
 function mulai(){
 
 document.getElementById("tutorial").style.display="none"
-document.getElementById("player").style.display="block"
 
 player.playVideo()
 
@@ -178,7 +191,7 @@ setInterval(cekWaktu,500)
 
 }
 
-function onPlayerStateChange(event){
+function stateChange(event){
 
 if(event.data==YT.PlayerState.ENDED && tahap==1){
 
@@ -198,23 +211,55 @@ if(tahap==2){
 
 let waktu=player.getCurrentTime()
 
-if(waktu>12){
+if(waktu>10){
 
 player.pauseVideo()
 
+tampilkanSoal()
+
+tahap=3
+
+}
+
+}
+
+}
+
+function tampilkanSoal(){
+
+let data=soal[soalIndex]
+
 document.getElementById("pertanyaan").style.display="block"
 
-}
+document.getElementById("soal").innerHTML=data.tanya
 
-}
+let area=document.getElementById("opsiArea")
+
+area.innerHTML=""
+
+data.opsi.forEach(o=>{
+
+let img=document.createElement("img")
+
+img.src=o.gambar
+
+img.className="opsi"
+
+img.onclick=()=>cek(o.nilai)
+
+area.appendChild(img)
+
+})
 
 }
 
 function cek(pilih){
 
+let data=soal[soalIndex]
+
 let hasil=document.getElementById("hasil")
 
-if(pilih==jawaban){
+if(pilih==data.jawab){
 
 document.getElementById("benar").play()
 
@@ -225,6 +270,25 @@ score++
 document.getElementById("score").innerHTML="⭐ "+score
 
 confetti()
+
+soalIndex++
+
+if(soalIndex<soal.length){
+
+setTimeout(()=>{
+
+hasil.style.display="none"
+
+tampilkanSoal()
+
+},2000)
+
+}
+else{
+
+hasil.innerHTML="🏆 Kamu Hebat!"
+
+}
 
 }
 else{
