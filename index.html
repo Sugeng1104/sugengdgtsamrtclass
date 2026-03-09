@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,16 +11,19 @@ body{
 margin:0;
 font-family:'Comic Sans MS',sans-serif;
 text-align:center;
-height:100vh;
+min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 background:linear-gradient(135deg,#ff9a9e,#fad0c4);
-overflow:hidden;
+overflow-x:hidden;
 }
 
 .wrapper{
 text-align:center;
+padding:30px 20px 70px 20px;
+max-width:1000px;
+width:100%;
 }
 
 h1{
@@ -30,6 +33,11 @@ margin-bottom:10px;
 
 .subtitle{
 font-size:20px;
+margin-bottom:20px;
+}
+
+.star{
+font-size:22px;
 margin-bottom:20px;
 }
 
@@ -78,7 +86,7 @@ background:#ffa500;
 }
 
 .teacher{
-position:absolute;
+position:fixed;
 left:20px;
 bottom:20px;
 font-size:80px;
@@ -92,7 +100,7 @@ animation:wave 2s infinite;
 }
 
 .musicBtn{
-position:absolute;
+position:fixed;
 top:20px;
 right:20px;
 background:white;
@@ -100,11 +108,6 @@ padding:10px 15px;
 border-radius:20px;
 cursor:pointer;
 box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
-
-.star{
-font-size:22px;
-margin-bottom:15px;
 }
 
 .creator{
@@ -123,11 +126,29 @@ text-decoration:none;
 .grid{
 grid-template-columns:repeat(2,200px);
 }
+h1{
+font-size:36px;
+}
 }
 
 @media(max-width:600px){
 .grid{
 grid-template-columns:repeat(1,200px);
+}
+h1{
+font-size:28px;
+}
+.subtitle{
+font-size:16px;
+}
+.icon{
+font-size:60px;
+}
+.card button{
+font-size:16px;
+}
+.teacher{
+font-size:60px;
 }
 }
 
@@ -177,8 +198,6 @@ grid-template-columns:repeat(1,200px);
 <button onclick="openGame('puzzle.html')">Puzzle Mini</button>
 </div>
 
-<!-- MENU BARU -->
-
 <div class="card">
 <div class="icon">🎬</div>
 <button onclick="openGame('game-video-paud/game-video.html')">
@@ -196,8 +215,6 @@ Video Interaktif
 Dibuat oleh 
 <a href="https://wa.me/6283862505875" target="_blank">@SugengHidayat</a>
 </div>
-
-<!-- AUDIO -->
 
 <audio id="bgMusic" loop>
 <source src="assets/sound/latarmusik.mp3" type="audio/mpeg">
@@ -228,15 +245,11 @@ let playPromise=bgMusic.play()
 if(playPromise!==undefined){
 
 playPromise.catch(()=>{
-
 document.body.addEventListener("click",startExperience,{once:true})
-
 })
 
 }else{
-
 startExperience()
-
 }
 
 })
