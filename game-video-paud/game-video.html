@@ -11,6 +11,7 @@ font-family:Arial;
 text-align:center;
 background:linear-gradient(#dff9fb,#ffffff);
 margin:0;
+padding-bottom:40px;
 }
 
 h1{
@@ -64,7 +65,7 @@ transform:scale(1.1);
 }
 
 #hasil{
-font-size:45px;
+font-size:40px;
 margin-top:20px;
 display:none;
 }
@@ -131,19 +132,19 @@ transform:translateY(100vh) rotate(720deg);
 <script>
 
 let player
-let tahap=1
-let score=0
-let soalIndex=0
+let tahap = 1
+let score = 0
+let soalIndex = 0
 
 const soal=[
 
 {
 waktu:8,
-t:"Apa yang kita sikat?",
+tanya:"Apa yang kita sikat?",
 jawab:"gigi",
 opsi:[
 {gambar:"assets/img/gigi.png",nilai:"gigi"},
-{gambar:"assets/img/telinga.png",nilai:"telinag"},
+{gambar:"assets/img/telinga.png",nilai:"telinga"},
 {gambar:"assets/img/hidung.png",nilai:"hidung"}
 ]
 },
@@ -172,7 +173,7 @@ opsi:[
 
 {
 waktu:34,
-t:"Apa yang dipakai bersama sikat?",
+tanya:"Apa yang dipakai bersama sikat?",
 jawab:"pasta",
 opsi:[
 {gambar:"assets/img/pasta.png",nilai:"pasta"},
@@ -190,11 +191,11 @@ opsi:[
 {gambar:"assets/img/wortel.png",nilai:"wortel"},
 {gambar:"assets/img/susu.png",nilai:"susu"}
 ]
-}
+},
 
 {
 waktu:45,
-t:"Apa yang membuat gigi kuat?",
+tanya:"Apa yang membuat gigi kuat?",
 jawab:"susu",
 opsi:[
 {gambar:"assets/img/permen.png",nilai:"permen"},
@@ -205,14 +206,14 @@ opsi:[
 
 {
 waktu:52,
-t:"Apa yang membuat gigi rusak?",
+tanya:"Apa yang membuat gigi rusak?",
 jawab:"permen",
 opsi:[
-{gambar:"assets/img/permen.png",nilai:"permen"},
+{gambar:"assets/img/coklat.png",nilai:"coklat"},
 {gambar:"assets/img/sayur.png",nilai:"sayur"},
 {gambar:"assets/img/buah.png",nilai:"buah"}
 ]
-},
+}
 
 ]
 
@@ -243,9 +244,7 @@ function stateChange(event){
 if(event.data==YT.PlayerState.ENDED && tahap==1){
 
 tahap=2
-
 player.seekTo(0)
-
 player.playVideo()
 
 }
@@ -254,7 +253,7 @@ player.playVideo()
 
 function cekWaktu(){
 
-if(tahap==2){
+if(tahap==2 && soalIndex < soal.length){
 
 let waktuVideo=player.getCurrentTime()
 
@@ -263,9 +262,7 @@ let target=soal[soalIndex].waktu
 if(waktuVideo>target){
 
 player.pauseVideo()
-
 tampilkanSoal()
-
 tahap=3
 
 }
@@ -279,11 +276,9 @@ function tampilkanSoal(){
 let data=soal[soalIndex]
 
 document.getElementById("pertanyaan").style.display="block"
-
 document.getElementById("soal").innerHTML=data.tanya
 
 let area=document.getElementById("opsiArea")
-
 area.innerHTML=""
 
 data.opsi.forEach(o=>{
@@ -291,7 +286,6 @@ data.opsi.forEach(o=>{
 let img=document.createElement("img")
 
 img.src=o.gambar
-
 img.className="opsi"
 
 img.onclick=()=>cek(o.nilai)
@@ -305,7 +299,6 @@ area.appendChild(img)
 function cek(pilih){
 
 let data=soal[soalIndex]
-
 let hasil=document.getElementById("hasil")
 
 if(pilih==data.jawab){
@@ -322,16 +315,14 @@ confetti()
 
 soalIndex++
 
-if(soalIndex<soal.length){
+if(soalIndex < soal.length){
 
 setTimeout(()=>{
 
 hasil.style.display="none"
-
 document.getElementById("pertanyaan").style.display="none"
 
 player.playVideo()
-
 tahap=2
 
 },2000)
@@ -340,6 +331,7 @@ tahap=2
 else{
 
 hasil.innerHTML="🏆 Kamu Hebat!"
+hasil.style.display="block"
 
 }
 
@@ -349,10 +341,9 @@ else{
 document.getElementById("salah").play()
 
 hasil.innerHTML="❌ Coba lagi"
+hasil.style.display="block"
 
 }
-
-hasil.style.display="block"
 
 }
 
@@ -380,5 +371,3 @@ setTimeout(()=>c.remove(),3000)
 
 </body>
 </html>
-
-
