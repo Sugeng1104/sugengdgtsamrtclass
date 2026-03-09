@@ -2,6 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Game Video Gigi PAUD</title>
 
 <style>
@@ -46,6 +47,7 @@ margin-top:20px;
 #player iframe{
 border-radius:12px;
 box-shadow:0 0 15px rgba(0,0,0,0.3);
+max-width:100%;
 }
 
 #pertanyaan{
@@ -87,6 +89,15 @@ animation:fall 3s linear forwards;
 to{
 transform:translateY(100vh) rotate(720deg);
 }
+}
+
+@media(max-width:600px){
+
+.opsi{
+width:90px;
+margin:10px;
+}
+
 }
 
 </style>
@@ -135,11 +146,12 @@ let player
 let tahap = 1
 let score = 0
 let soalIndex = 0
+let timer
 
 const soal=[
 
 {
-waktu:1:24,
+waktu:84,
 tanya:"Apa yang dipakai bersama sikat?",
 jawab:"pasta",
 opsi:[
@@ -150,7 +162,7 @@ opsi:[
 },
 
 {
-waktu:84,
+waktu:100,
 tanya:"Apa yang kita sikat?",
 jawab:"gigi",
 opsi:[
@@ -161,7 +173,7 @@ opsi:[
 },
 
 {
-waktu:100,
+waktu:105,
 tanya:"Apa yang dipakai untuk membersihkan gigi?",
 jawab:"sikat",
 opsi:[
@@ -172,7 +184,7 @@ opsi:[
 },
 
 {
-waktu:105,
+waktu:148,
 tanya:"Kapan kita sikat gigi?",
 jawab:"pagi",
 opsi:[
@@ -183,7 +195,7 @@ opsi:[
 },
 
 {
-waktu:148,
+waktu:40,
 tanya:"Apa yang bisa membuat gigi berlubang?",
 jawab:"permen",
 opsi:[
@@ -198,11 +210,11 @@ waktu:189,
 tanya:"Apa yang membuat gigi rusak?",
 jawab:"permen",
 opsi:[
-{gambar:"assets/img/coklat.png",nilai:"coklat"},
+{gambar:"assets/img/permen.png",nilai:"permen"},
 {gambar:"assets/img/sayur.png",nilai:"sayur"},
 {gambar:"assets/img/buah.png",nilai:"buah"}
 ]
-}
+},
 
 {
 waktu:202,
@@ -213,7 +225,7 @@ opsi:[
 {gambar:"assets/img/wortel.png",nilai:"wortel"},
 {gambar:"assets/img/susu.png",nilai:"susu"}
 ]
-},
+}
 
 ]
 
@@ -235,7 +247,7 @@ document.getElementById("tutorial").style.display="none"
 
 player.playVideo()
 
-setInterval(cekWaktu,500)
+timer=setInterval(cekWaktu,500)
 
 }
 
@@ -256,10 +268,9 @@ function cekWaktu(){
 if(tahap==2 && soalIndex < soal.length){
 
 let waktuVideo=player.getCurrentTime()
-
 let target=soal[soalIndex].waktu
 
-if(waktuVideo>target){
+if(waktuVideo>=target){
 
 player.pauseVideo()
 tampilkanSoal()
@@ -301,6 +312,8 @@ function cek(pilih){
 let data=soal[soalIndex]
 let hasil=document.getElementById("hasil")
 
+hasil.style.display="block"
+
 if(pilih==data.jawab){
 
 document.getElementById("benar").play()
@@ -331,7 +344,6 @@ tahap=2
 else{
 
 hasil.innerHTML="🏆 Kamu Hebat!"
-hasil.style.display="block"
 
 }
 
@@ -341,7 +353,6 @@ else{
 document.getElementById("salah").play()
 
 hasil.innerHTML="❌ Coba lagi"
-hasil.style.display="block"
 
 }
 
