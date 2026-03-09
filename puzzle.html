@@ -46,6 +46,7 @@ background:#ddd;
 border-radius:6px;
 background-repeat:no-repeat;
 cursor:grab;
+user-select:none;
 }
 
 .tile.correct{
@@ -141,6 +142,11 @@ to{transform:translateY(100vh) rotate(720deg)}
 const board=document.getElementById("board")
 const preview=document.getElementById("preview")
 const bg=document.getElementById("bg")
+const starDiv=document.getElementById("star")
+const level=document.getElementById("level")
+const win=document.getElementById("win")
+const clap=document.getElementById("clap")
+const guru=document.getElementById("guru")
 
 bg.volume=0.25
 
@@ -195,8 +201,6 @@ tiles[j]=temp
 
 }
 
-let dragIndex=null
-
 function render(){
 
 board.innerHTML=""
@@ -234,8 +238,11 @@ e.preventDefault()
 }
 
 div.ondrop=(e)=>{
-let from=e.dataTransfer.getData("index")
-swap(parseInt(from),index)
+
+let from=parseInt(e.dataTransfer.getData("index"))
+
+swap(from,index)
+
 }
 
 board.appendChild(div)
@@ -315,8 +322,6 @@ bg.play()
 },{once:true})
 
 startGame()
-
-const starDiv=document.getElementById("star")
 
 </script>
 
