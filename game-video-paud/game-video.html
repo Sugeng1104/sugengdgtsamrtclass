@@ -6,6 +6,13 @@
 
 <style>
 
+#playerContainer{
+display:flex;
+justify-content:center;
+align-items:center;
+margin-top:20px;
+}
+
 body{
 font-family:Arial;
 text-align:center;
@@ -82,6 +89,12 @@ transform:translateY(100vh) rotate(720deg);
 }
 }
 
+#player iframe{
+max-width:90vw;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
+}
+
 </style>
 </head>
 
@@ -104,7 +117,9 @@ transform:translateY(100vh) rotate(720deg);
 </div>
 
 
+<div id="playerContainer">
 <div id="player"></div>
+</div>
 
 
 <div id="pertanyaan">
