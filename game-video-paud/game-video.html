@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Game Video PAUD</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+background:linear-gradient(#dff9fb,#ffffff);
+margin:0;
+}
+
+h1{
+margin-top:20px;
+}
+
+#video{
+width:500px;
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
+}
+
+#tutorial{
+font-size:22px;
+margin:20px;
+}
+
+button{
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+background:#6ab04c;
+color:white;
+}
+
+button:hover{
+background:#27ae60;
+}
+
+#pilihan{
+display:none;
+margin-top:20px;
+}
+
+.opsi{
+width:120px;
+margin:15px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.opsi:hover{
+transform:scale(1.1);
+}
+
+#hasil{
+font-size:50px;
+display:none;
+margin-top:20px;
+}
+
+#score{
+font-size:24px;
+margin-top:15px;
+}
+
+.star{
+font-size:40px;
+color:gold;
+}
+
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+top:-10px;
+animation:fall 3s linear forwards;
+}
+
+@keyframes fall{
+to{transform:translateY(100vh) rotate(720deg)}
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🎬 Game Video Anak</h1>
+
+<div id="tutorial">
+👋 Halo anak-anak!<br><br>
+1️⃣ Tonton videonya dulu ya.<br>
+2️⃣ Nanti videonya diputar lagi.<br>
+3️⃣ Jika berhenti, pilih gambar yang benar!<br><br>
+
+<button onclick="mulai()">▶ Mulai</button>
+</div>
+
+<br>
+
+<video id="video" controls style="display:none">
+<source src="assets/video/hewan.mp4" type="video/mp4">
+</video>
+
+<div id="pilihan">
+
+<h2>Apa hewan yang muncul di video?</h2>
+
+<img src="assets/img/kucing.png" class="opsi" onclick="cek('kucing')">
+
+<img src="assets/img/ayam.png" class="opsi" onclick="cek('ayam')">
+
+<img src="assets/img/sapi.png" class="opsi" onclick="cek('sapi')">
+
+</div>
+
+<div id="hasil"></div>
+
+<div id="score">⭐ 0</div>
+
+<audio id="benar" src="assets/sound/clap.mp3"></audio>
+<audio id="salah" src="assets/sound/wrong.mp3"></audio>
+
+<script>
+
+let video=document.getElementById("video")
+let pilihan=document.getElementById("pilihan")
+let hasil=document.getElementById("hasil")
+let score=0
+let jawaban="kucing"
+let tahap=1
+
+function mulai(){
+
+document.getElementById("tutorial").style.display="none"
+
+video.style.display="block"
+
+video.play()
+
+}
+
+video.onended=function(){
+
+if(tahap==1){
+
+tahap=2
+
+video.currentTime=0
+
+video.play()
+
+}
+
+}
+
+video.ontimeupdate=function(){
+
+if(tahap==2 && video.currentTime>4){
+
+video.pause()
+
+pilihan.style.display="block"
+
+}
+
+}
+
+function cek(pilih){
+
+if(pilih==jawaban){
+
+document.getElementById("benar").play()
+
+hasil.innerHTML="🎉 Hebat!"
+
+score++
+
+document.getElementById("score").innerHTML="⭐ "+score
+
+confetti()
+
+}
+
+else{
+
+document.getElementById("salah").play()
+
+hasil.innerHTML="❌ Coba lagi"
+
+}
+
+hasil.style.display="block"
+
+}
+
+function confetti(){
+
+for(let i=0;i<80;i++){
+
+let c=document.createElement("div")
+
+c.className="confetti"
+
+c.style.left=Math.random()*100+"vw"
+
+c.style.background=`hsl(${Math.random()*360},100%,50%)`
+
+document.body.appendChild(c)
+
+setTimeout(()=>c.remove(),3000)
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
