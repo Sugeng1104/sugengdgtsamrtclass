@@ -225,11 +225,18 @@ div.style.backgroundPosition=`-${x}px -${y}px`
 
 div.draggable=true
 
-div.ondragstart=()=>dragIndex=index
+div.ondragstart=(e)=>{
+e.dataTransfer.setData("index",index)
+}
 
-div.ondragover=e=>e.preventDefault()
+div.ondragover=(e)=>{
+e.preventDefault()
+}
 
-div.ondrop=()=>swap(index)
+div.ondrop=(e)=>{
+let from=e.dataTransfer.getData("index")
+swap(parseInt(from),index)
+}
 
 board.appendChild(div)
 
