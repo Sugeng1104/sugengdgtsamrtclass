@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Video Gigi PAUD</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+background:linear-gradient(#dff9fb,#ffffff);
+margin:0;
+padding-bottom:40px;
+}
+
+h1{
+margin-top:20px;
+}
+
+#tutorial{
+font-size:22px;
+margin:30px;
+}
+
+button{
+padding:15px 25px;
+font-size:18px;
+border:none;
+border-radius:15px;
+background:#6ab04c;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#27ae60;
+}
+
+#playerContainer{
+display:flex;
+justify-content:center;
+margin-top:20px;
+}
+
+#player iframe{
+border-radius:12px;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
+max-width:100%;
+}
+
+#pertanyaan{
+display:none;
+margin-top:20px;
+}
+
+.opsi{
+width:120px;
+margin:15px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.opsi:hover{
+transform:scale(1.1);
+}
+
+#hasil{
+font-size:40px;
+margin-top:20px;
+display:none;
+}
+
+#score{
+font-size:26px;
+margin-top:10px;
+}
+
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+top:-10px;
+animation:fall 3s linear forwards;
+}
+
+@keyframes fall{
+to{
+transform:translateY(100vh) rotate(720deg);
+}
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>🦷 Game Video Gigi</h1>
+
+<div id="score">⭐ 0</div>
+
+<div id="tutorial">
+
+👋 Halo anak-anak!<br><br>
+
+1️⃣ Tonton video dulu ya<br>
+2️⃣ Video akan berhenti<br>
+3️⃣ Pilih gambar yang benar<br><br>
+
+<button onclick="mulai()">▶ Mulai Bermain</button>
+
+</div>
+
+<div id="playerContainer">
+<div id="player"></div>
+</div>
+
+<div id="pertanyaan">
+
+<h2 id="soal"></h2>
+
+<div id="opsiArea"></div>
+
+</div>
+
+<div id="hasil"></div>
+
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<script>
+
+let player
+let tahap = 1
+let score = 0
+let soalIndex = 0
+let timer
+
+const soal=[
+
+{
+waktu:10,
+tanya:"Mana makanan sehat untuk gigi?",
+jawab:"wortel",
+opsi:[
+{gambar:"https://cdn-icons-png.flaticon.com/512/135/135620.png",nilai:"permen"},
+{gambar:"https://cdn-icons-png.flaticon.com/512/2909/2909766.png",nilai:"wortel"},
+{gambar:"https://cdn-icons-png.flaticon.com/512/1046/1046784.png",nilai:"susu"}
+]
+},
+
+{
+waktu:20,
+tanya:"Apa yang dipakai untuk sikat gigi?",
+jawab:"pasta",
+opsi:[
+{gambar:"https://cdn-icons-png.flaticon.com/512/3004/3004458.png",nilai:"pasta"},
+{gambar:"https://cdn-icons-png.flaticon.com/512/2917/2917995.png",nilai:"sabun"},
+{gambar:"https://cdn-icons-png.flaticon.com/512/3143/3143643.png",nilai:"minyak"}
+]
+}
+
+]
+
+function onYouTubeIframeAPIReady(){
+
+player=new YT.Player('player',{
+height:'360',
+width:'640',
+videoId:'P0qB5BUr9RY',
+playerVars:{
+rel:0,
+enablejsapi:1,
+origin:window.location.origin
+},
+events:{
+'onReady':onPlayerReady
+}
+})
+
+}
+
+function onPlayerReady(){
+}
+
+function mulai(){
+
+document.getElementById("tutorial").style.display="none"
+
+player.playVideo()
+
+timer=setInterval(cekWaktu,500)
+
+}
+
+function cekWaktu(){
+
+if(soalIndex >= soal.length) return
+
+let waktuVideo=player.getCurrentTime()
+let target=soal[soalIndex].waktu
+
+if(waktuVideo>=target){
+
+player.pauseVideo()
+tampilkanSoal()
+
+}
+
+}
+
+function tampilkanSoal(){
+
+let data=soal[soalIndex]
+
+document.getElementById("pertanyaan").style.display="block"
+document.getElementById("soal").innerHTML=data.tanya
+
+let area=document.getElementById("opsiArea")
+area.innerHTML=""
+
+data.opsi.forEach(o=>{
+
+let img=document.createElement("img")
+
+img.src=o.gambar
+img.className="opsi"
+
+img.onclick=()=>cek(o.nilai)
+
+area.appendChild(img)
+
+})
+
+}
+
+function cek(pilih){
+
+let data=soal[soalIndex]
+let hasil=document.getElementById("hasil")
+
+hasil.style.display="block"
+
+if(pilih==data.jawab){
+
+hasil.innerHTML="🎉 Hebat!"
+
+score++
+
+document.getElementById("score").innerHTML="⭐ "+score
+
+confetti()
+
+soalIndex++
+
+if(soalIndex < soal.length){
+
+setTimeout(()=>{
+
+hasil.style.display="none"
+document.getElementById("pertanyaan").style.display="none"
+
+player.playVideo()
+
+},2000)
+
+}
+else{
+
+clearInterval(timer)
+hasil.innerHTML="🏆 Kamu Hebat!"
+
+}
+
+}
+else{
+
+hasil.innerHTML="❌ Coba lagi"
+
+}
+
+}
+
+function confetti(){
+
+for(let i=0;i<80;i++){
+
+let c=document.createElement("div")
+
+c.className="confetti"
+
+c.style.left=Math.random()*100+"vw"
+
+c.style.background=`hsl(${Math.random()*360},100%,50%)`
+
+document.body.appendChild(c)
+
+setTimeout(()=>c.remove(),3000)
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
+
